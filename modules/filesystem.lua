@@ -96,7 +96,7 @@ do
             return specialfiles[self.path].write(byte)
          end
 
-         local file = fs.open(self.path, "r")
+         local file = fs.open(self.path, "w+")
          file.seek(byte)
 
          file.write(string.char(byte))
@@ -134,7 +134,6 @@ local fs = _fs
 
 ---Creates a new file.
 ---@param path string
----@return HydraKernel.FileSystem.File
 function lib.newFile(path)
    if fs.exists(fs.getDir(path)) then
       local file, err = fs.open(path, "w")
@@ -164,6 +163,9 @@ function lib.openFile(path, mode)
       return setmetatable({byte = 0, path = path, opened = true}, metatables.readFile)
    elseif mode == "w" and not (not opened[path] and not specialfiles[path]) then
       opened[path] = true
+      
+      lib.newFile(path)
+
       return setmetatable({byte = 0, path = path, opened = true}, metatables.writeFile)
    elseif mode == "r" or mode == "w" then
       print("File already open.")
