@@ -1,6 +1,7 @@
 ---@diagnostic disable undefined-field
 
 ---@class HydraKernel.FileSystem
+---@field fs {[string]: function}
 local lib = setmetatable({}, {
    __type = "HydraKernel.FileSystem"
 })
@@ -128,8 +129,8 @@ end
 
 ---@diagnostic disable-next-line undefined-global
 local _fs = fs
----@diagnostic disable-next-line lowercase-global
-fs = nil
+lib.fs = _fs
+fs = nil ---@diagnostic disable-line lowercase-global
 local fs = _fs
 
 ---Creates a new file.
