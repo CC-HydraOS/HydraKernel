@@ -20,6 +20,8 @@ kernel = setmetatable({}, {
 kernel.filesystem = require("modules.filesystem")
 kernel.screen = require("modules.screen")
 kernel.peripherals = require("modules.peripherals")
+kernel.events = require("modules.events")
+kernel.processes = require("modules.processes")
 
 
 for k, v in pairs(kernel) do
@@ -41,5 +43,9 @@ kernel = setmetatable({}, {
 })
 _G.kernel = kernel
 
-return kernel
+kernel.processes.run("/start.lua")
+
+while true do
+   kernel.events.fireEvent(kernel.events.awaitEvent())
+end
 

@@ -203,21 +203,20 @@ local screens = {
 ---@diagnostic disable-next-line lowercase-global
 term = nil
 
-function lib.get(id)
-   return screens[id]
+local peripherals = require((...):gsub("%.screen$", "") .. ".peripherals")
+local function updateScreens()
+   local native = screens[0]
+   screens = {[0] = native}
+
+   for _, monitor in pairs(peripherals.find("monitor")) do
+      screens[#screens + 1] = wrap(monitor)
+   end
 end
 
-local peripherals = require((...):gsub("%.screen$", "") .. ".peripherals")
-coroutine.resume(coroutine.create(function()
-   local native = screens[0]
-   while true do
-      screens = {[0] = native}
-
-      for _, monitor in peripherals.find("monitor") do
-         screens[#screens + 1] = wrap(monitor)
-      end
-   end
-end))
+function lib.get(id)
+   updateScreens()
+   return screens[id]
+end
 
 return lib
 
