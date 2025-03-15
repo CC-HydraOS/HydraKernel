@@ -18,6 +18,8 @@ kernel = setmetatable({}, {
    __type = "HydraKernel"
 })
 kernel.filesystem = require("modules.filesystem")
+kernel.screen = require("modules.screen")
+kernel.peripherals = require("modules.peripherals")
 
 
 for k, v in pairs(kernel) do
