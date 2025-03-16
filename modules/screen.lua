@@ -203,12 +203,12 @@ local screens = {
 ---@diagnostic disable-next-line lowercase-global
 term = nil
 
-local peripherals = require((...):gsub("%.screen$", "") .. ".peripherals")
+local peripherals = require("HydraKernel.modules.peripherals")
 local function updateScreens()
    local native = screens[0]
    screens = {[0] = native}
 
-   for _, monitor in pairs(peripherals.find("monitor")) do
+   for _, monitor in pairs(peripherals.find("monitor"), function() return true end) do
       screens[#screens + 1] = wrap(monitor)
    end
 end

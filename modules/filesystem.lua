@@ -68,7 +68,7 @@ do
          end
 
          local file = fs.open(self.path, "r")
-         file.seek(byte)
+         file.seek("set", byte)
 
          local byte = string.byte(file.read(1))
 
@@ -98,7 +98,7 @@ do
          end
 
          local file = fs.open(self.path, "w+")
-         file.seek(byte)
+         file.seek("set", byte)
 
          file.write(string.char(byte))
 
@@ -128,10 +128,7 @@ do
 end
 
 ---@diagnostic disable-next-line undefined-global
-local _fs = fs
-lib.fs = _fs
-fs = nil ---@diagnostic disable-line lowercase-global
-local fs = _fs
+lib.fs = fs
 
 ---Creates a new file.
 ---@param path string

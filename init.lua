@@ -2,26 +2,17 @@
 
 local container = ...
 
-local _require = require
-local function require(modname)
-   local ret = pcall(_require, modname)
-   
-   if ret then
-      return _require(modname)
-   else
-      return _require(container .. "." .. modname)
-   end
-end
+require, package = dofile("HydraKernel/require.lua")()
 
 ---@class HydraKernel
 kernel = setmetatable({}, {
    __type = "HydraKernel"
 })
-kernel.filesystem = require("modules.filesystem")
-kernel.screen = require("modules.screen")
-kernel.peripherals = require("modules.peripherals")
-kernel.events = require("modules.events")
-kernel.processes = require("modules.processes")
+kernel.filesystem = require("HydraKernel.modules.filesystem")
+kernel.screen = require("HydraKernel.modules.screen")
+kernel.peripherals = require("HydraKernel.modules.peripherals")
+kernel.events = require("HydraKernel.modules.events")
+kernel.processes = require("HydraKernel.modules.processes")
 
 
 for k, v in pairs(kernel) do
