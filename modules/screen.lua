@@ -218,10 +218,33 @@ function lib.get(id)
    return screens[id]
 end
 
-function _G.print(text, term)
-   term = term or lib.get(0)
+local function split(str, on)
+    on = on or " "
+    local result = {}
+    local delimiter = on:gsub("([%(%)%.%%%+%-%*%?%[%]%^%$])", "%%%1")
+    for match in (str .. on):gmatch("(.-)" .. delimiter) do
+        result[#result+1] = match
+    end
+    return result
+end
 
-   for str in text:gmatch("[^\n]+") do
+function _G.print(...)
+   local packed = table.pack(...)
+
+   local term = lib.get(0)
+   for i = 1, packed.n do
+      if i == packed.n and getmetatable(packed[i]).__type == "HydraKernel.Screen" then
+         term = packed[i]
+         packed[i] = nil
+         break
+      else
+         packed[i] = tostring(packed[i])
+      end
+   end
+
+   local text = table.concat(packed)
+
+   for _, str in ipairs(split(text, "\n")) do
       term:write(str, true)
       local _, y = term:getCursorPos()
 
