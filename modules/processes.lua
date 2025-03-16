@@ -1,7 +1,7 @@
 ---@class HydraKernel.processes
 local lib = {}
 
-local req = require((...):gsub("%.processes$", ""):gsub("modules$", "") .. "require")
+local req = require("HydraKernel.require")
 local function mkEnv(dir)
    return setmetatable({
       require = req(dir)

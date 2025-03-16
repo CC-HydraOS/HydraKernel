@@ -16,7 +16,7 @@ function lib.register(func, name)
    }
 end
 
----@param 
+---@param callback string|function
 function lib.deregister(callback)
    for k, v in pairs(registered) do
       if v.name == callback or v.func == callback then

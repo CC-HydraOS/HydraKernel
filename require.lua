@@ -1,7 +1,7 @@
-local filesystem = require((...):gsub("%.?require$", "") .. ".modules.filesystem")
 local req
 req = function(dir)
    dir = dir or "/"
+   dir = dir:gsub("/$", "")
 
    local package = {
       config = "/\n;\n?",
@@ -17,7 +17,7 @@ req = function(dir)
       for pattern in path:gmatch("[^;]+") do
          local script = pattern:gsub("%?", module)
 
-         if filesystem.fs.exists(script) then
+         if fs.exists(script) then
             return script
          end
       end
@@ -59,7 +59,8 @@ req = function(dir)
       if not script then
          error(errs)
       else
-         local func, err = loadfile(script, nil, setmetatable({require = req(dir .. module:gsub("%.", "/"):gsub("[^/]+", ""))}, {__index=_G}))
+         local env = setmetatable({require = req(dir .. module:gsub("%.", "/"):gsub("[^/]+", ""))}, {__index=_G})
+         local func, err = loadfile(script, nil, env)
 
          if not func then
             error(err)

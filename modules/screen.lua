@@ -203,12 +203,12 @@ local screens = {
 ---@diagnostic disable-next-line lowercase-global
 term = nil
 
-local peripherals = require((...):gsub("%.screen$", "") .. ".peripherals")
+local peripherals = require("HydraKernel.modules.peripherals")
 local function updateScreens()
    local native = screens[0]
    screens = {[0] = native}
 
-   for _, monitor in pairs(peripherals.find("monitor")) do
+   for _, monitor in pairs(peripherals.find("monitor"), function() return true end) do
       screens[#screens + 1] = wrap(monitor)
    end
 end
@@ -216,6 +216,45 @@ end
 function lib.get(id)
    updateScreens()
    return screens[id]
+end
+
+local function split(str, on)
+    on = on or " "
+    local result = {}
+    local delimiter = on:gsub("([%(%)%.%%%+%-%*%?%[%]%^%$])", "%%%1")
+    for match in (str .. on):gmatch("(.-)" .. delimiter) do
+        result[#result+1] = match
+    end
+    return result
+end
+
+function _G.print(...)
+   local packed = table.pack(...)
+
+   local term = lib.get(0)
+   for i = 1, packed.n do
+      if i == packed.n and getmetatable(packed[i]).__type == "HydraKernel.Screen" then
+         term = packed[i]
+         packed[i] = nil
+         break
+      else
+         packed[i] = tostring(packed[i])
+      end
+   end
+
+   local text = table.concat(packed)
+
+   for _, str in ipairs(split(text, "\n")) do
+      term:write(str, true)
+      local _, y = term:getCursorPos()
+
+      if y >= term:getHeight() then
+         y = y - 1
+         term:scroll(1)
+      end
+
+      term:setCursorPos(1, y + 1)
+   end
 end
 
 return lib
