@@ -193,8 +193,8 @@ function screen.setPaletteColor(self, index, color)
 end
 
 
-local function wrap(monitor)
-   return setmetatable({native = (monitor.native and monitor.native() or monitor)}, screenMt)
+local function wrap(monitor, name)
+   return setmetatable({native = (monitor.native and monitor.native() or monitor), name = name}, screenMt)
 end
 
 local screens = {
@@ -208,8 +208,8 @@ local function updateScreens()
    local native = screens[0]
    screens = {[0] = native}
 
-   for _, monitor in pairs(peripherals.find("monitor"), function() return true end) do
-      screens[#screens + 1] = wrap(monitor)
+   for _, monitor in pairs(peripherals.find("monitor")) do
+      screens[#screens + 1] = wrap(monitor, monitor.name or "Built-in Screen")
    end
 end
 
