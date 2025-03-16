@@ -218,5 +218,21 @@ function lib.get(id)
    return screens[id]
 end
 
+function _G.print(text, term)
+   term = term or lib.get(0)
+
+   for str in text:gmatch("[^\n]+") do
+      term:write(str, true)
+      local _, y = term:getCursorPos()
+
+      if y >= term:getHeight() then
+         y = y - 1
+         term:scroll(1)
+      end
+
+      term:setCursorPos(1, y + 1)
+   end
+end
+
 return lib
 
