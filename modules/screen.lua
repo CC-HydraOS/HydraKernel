@@ -241,11 +241,9 @@ function _G.print(...)
       else
          packed[i] = tostring(packed[i])
       end
-
-      print(" ")
    end
 
-   local text = table.concat(packed)
+   local text = table.concat(packed, " ")
 
    for _, str in ipairs(split(text, "\n")) do
       term:write(str, true)
