@@ -1,3 +1,5 @@
+---@alias HydraKernel.Peripherals.Wrapped {name: string, type: string, [string]: function}
+
 if peripheral.getNames and debug then
    local i, key, value = 1, debug.getupvalue(peripheral.isPresent, 2)
    while key ~= "native" and key ~= nil do
@@ -148,13 +150,13 @@ end
 
 ---Wraps a peripheral
 ---@param name string
----@return {name: string, type: string, [string]: function}
+---@return HydraKernel.Peripherals.Wrapped
 function lib.wrap(name)
    local wrapped = {name = name, type = lib.getType(name)}
 
-   for _, method in ipairs(lib.getMethods(name) --[[@as table]]) do
-      wrapped[method] = function(...)
-         lib.call(name, method, ...)
+   for _, method in ipairs(lib.getMethods(name) or {}) do
+      wrapped[method] = function(...) --[[@as function]] ---@diagnostic disable-line
+         return lib.call(name, method, ...)
       end
    end
 
@@ -163,15 +165,15 @@ end
 
 ---Gets and wraps every peripheral of a specific type based on an optional filter
 ---@param type any
----@param filter (fun(name: string, peripheral: {name: string, type: string, [string]: function}): boolean)?
----@return {name: string, type: string, [string]: function}[]
+---@param filter (fun(name: string, peripheral: HydraKernel.Peripherals.Wrapped): boolean)?
+---@return HydraKernel.Peripherals.Wrapped[]
 function lib.find(type, filter)
    filter = filter or function() return true end
 
    local peripherals = {}
    for _, name in ipairs(lib.getPeripherals()) do
       if lib.hasType(name, type) then
-         local wrapped = lib.wrap(name) --[[@as {name: string, type: string, [string]: function}]]
+         local wrapped = lib.wrap(name)
 
          if filter(name, wrapped) then
             table.insert(peripherals, wrapped)

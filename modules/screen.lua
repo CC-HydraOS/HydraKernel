@@ -1,6 +1,7 @@
 local lib = {}
 ---@class HydraKernel.Screen
 ---@field native table
+---@field name string?
 local screen = {}
 local screenMt = {
    __index = screen,
@@ -229,17 +230,19 @@ local function split(str, on)
 end
 
 function _G.print(...)
-   local packed = table.pack(...)
+   local packed = table.pack(...) or {n=0}
 
    local term = lib.get(0)
    for i = 1, packed.n do
-      if i == packed.n and getmetatable(packed[i]).__type == "HydraKernel.Screen" then
+      if i == packed.n and (getmetatable(packed[i]) or {}).__type == "HydraKernel.Screen" then
          term = packed[i]
          packed[i] = nil
          break
       else
          packed[i] = tostring(packed[i])
       end
+
+      print(" ")
    end
 
    local text = table.concat(packed)
@@ -255,6 +258,12 @@ function _G.print(...)
 
       term:setCursorPos(1, y + 1)
    end
+end
+
+---Returns a table of every screen available.
+---@return HydraKernel.Screen[]
+function lib.getAll()
+   return screens
 end
 
 return lib
