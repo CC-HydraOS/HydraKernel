@@ -202,7 +202,7 @@ local screens = {
    [0] = wrap(term)
 }
 ---@diagnostic disable-next-line lowercase-global
-term = nil
+_G.term = nil
 
 local peripherals = require("HydraKernel.modules.peripherals")
 local function updateScreens()
