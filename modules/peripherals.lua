@@ -13,7 +13,7 @@ peripheral = nil ---@diagnostic disable-line lowercase-global
 local lib = {}
 
 local sides = {
-   "bottom", "top", "back", "front", "left"
+   "bottom", "top", "back", "front", "left", "right"
 }
 
 ---Returns a list of peripherals
@@ -152,7 +152,7 @@ end
 function lib.wrap(name)
    local wrapped = {name = name, type = lib.getType(name)}
 
-   for _, method in lib.getMethods(name) do
+   for _, method in ipairs(lib.getMethods(name) --[[@as table]]) do
       wrapped[method] = function(...)
          lib.call(name, method, ...)
       end
@@ -163,7 +163,7 @@ end
 
 ---Gets and wraps every peripheral of a specific type based on an optional filter
 ---@param type any
----@param filter fun(name: string, peripheral: {name: string, type: string, [string]: function}): boolean
+---@param filter (fun(name: string, peripheral: {name: string, type: string, [string]: function}): boolean)?
 ---@return {name: string, type: string, [string]: function}[]
 function lib.find(type, filter)
    filter = filter or function() return true end
@@ -171,7 +171,7 @@ function lib.find(type, filter)
    local peripherals = {}
    for _, name in ipairs(lib.getPeripherals()) do
       if lib.hasType(name, type) then
-         local wrapped = peripheral.wrap(name)
+         local wrapped = lib.wrap(name) --[[@as {name: string, type: string, [string]: function}]]
 
          if filter(name, wrapped) then
             table.insert(peripherals, wrapped)
