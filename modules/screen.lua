@@ -261,8 +261,23 @@ end
 ---Returns a table of every screen available.
 ---@return HydraKernel.Screen[]
 function lib.getAll()
+   updateScreens()
    return screens
 end
+
+require("boot.kernel.modules.filesystem").makeSpecialFileFolder("/dev/screens", function(request, path, mode)
+   if request == "list_files" then
+      updateScreens()
+   elseif request == "open_file" then
+      if mode == "r" then
+         error("Screens do not support reading.")
+      elseif mode == "w" then
+         return lib.get(tonumber(path:match("[0-9]+$")))
+      end
+   elseif request == "exists" then
+      return lib.get(tonumber(path:match("[0-9]+$"))) and "file"
+   end
+end)
 
 return lib
 

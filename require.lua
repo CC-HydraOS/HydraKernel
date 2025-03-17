@@ -1,11 +1,16 @@
 local req
+--local fsRet, fs = loadfile("/boot/kernel/modules/filesystem.lua", nil, _G)()
+local fs = _G.fs
+
 req = function(dir)
    dir = dir or "/"
    dir = dir:gsub("/$", "")
 
    local package = {
       config = "/\n;\n?",
-      loaded = {},
+      loaded = {
+--         ["boot.kernel.modules.filesystem"] = {fsRet, fs}
+      },
       path = dir .. "/?.lua;/lib/?.lua;/?.lua" .. dir .. "/?/init.lua;/lib/?/init.lua;/?.lua;/?/init.lua",
       preload = {},
       searchers = {},
@@ -26,7 +31,7 @@ req = function(dir)
    end
 
    package.searchers[1] = function(module)
-      return package.preload[module]
+      return package.preload[module] and package.preload[module]()
    end
 
    package.searchers[2] = function(module)
@@ -36,7 +41,7 @@ req = function(dir)
    local function require(module)
       if package.loaded[module] then
          local ret = package.loaded[module] == true and {n=0} or package.loaded[module]
-         return ret.n == 0 and true or table.unpack(ret, 1, ret.n)
+         return ret.n == 0 and true or table.unpack(ret, 1, ret.n or #ret)
       end
 
       local script
