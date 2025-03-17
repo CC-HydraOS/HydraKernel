@@ -42,6 +42,6 @@ _G.kernel = kernel
 kernel.processes.run("/boot/kernel/login.lua")
 
 while true do
-   kernel.events.fireEvent(kernel.events.awaitEvent())
+   kernel.processes.fireEvent(kernel.events.awaitEvent())
 end
 

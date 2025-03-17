@@ -25,12 +25,6 @@ function lib.deregister(callback)
    end
 end
 
-function lib.fireEvent(event, ...)
-   for _, v in pairs(registered) do
-      v.func(event, ...)
-   end
-end
-
 function lib.awaitEvent()
    return coroutine.yield()
 end

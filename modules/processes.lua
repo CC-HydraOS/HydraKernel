@@ -36,9 +36,35 @@ function lib.run(path, args)
    local name = path:gsub("/" .. parent:gsub(".", pattern) .. "$", "")
    local func = assert(loadfile(path, nil, mkEnv(parent)))
 
-   processes[#processes + 1] = func
+   processes[#processes + 1] = {coroutine = coroutine.create(func), name = name}
 
-   return func(args)
+   return coroutine.resume(processes[#processes].coroutine, args)
+end
+
+function lib.fireEvent(...)
+   local dead = {}
+   for k, v in pairs(processes) do
+      if coroutine.status(v.coroutine) == "dead" then
+         dead[k] = true
+      end
+
+      coroutine.resume(v.coroutine, ...)
+   end
+
+   for k in pairs(dead) do
+      processes[k] = nil
+   end
+end
+
+function lib.killProcess(name)
+   local delete = {}
+   for k, v in pairs(processes) do
+      delete[k] = (v.name == name)
+   end
+
+   for k in pairs(delete) do
+      processes[k] = nil
+   end
 end
 
 return lib
