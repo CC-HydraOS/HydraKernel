@@ -2,18 +2,23 @@
 
 local container = ...
 
-require, package = dofile("HydraKernel/require.lua")()
+require, package = dofile("/boot/kernel/require.lua")()
+package.path = package.path .. ";/boot/?.lua"
 
 ---@class HydraKernel
 kernel = setmetatable({}, {
    __type = "HydraKernel"
 })
-kernel.filesystem = require("HydraKernel.modules.filesystem")
-kernel.screen = require("HydraKernel.modules.screen")
-kernel.peripherals = require("HydraKernel.modules.peripherals")
-kernel.events = require("HydraKernel.modules.events")
-kernel.processes = require("HydraKernel.modules.processes")
+kernel.filesystem = require("boot.kernel.modules.filesystem")
+kernel.screen = require("boot.kernel.modules.screen")
+kernel.peripherals = require("boot.kernel.modules.peripherals")
+kernel.events = require("boot.kernel.modules.events")
+kernel.processes = require("boot.kernel.modules.processes")
 
+for _, v in pairs(fs.list("/boot/kernel/modules")) do
+   local name = v:gsub("%.lua$", "")
+   kernel[name] = require(fs.combine("/boot/kernel/modules", name):gsub("/", "."))
+end
 
 for k, v in pairs(kernel) do
    if type(v) == "table" then
@@ -34,7 +39,7 @@ kernel = setmetatable({}, {
 })
 _G.kernel = kernel
 
-kernel.processes.run("/start.lua")
+kernel.processes.run("/boot/kernel/login.lua")
 
 while true do
    kernel.events.fireEvent(kernel.events.awaitEvent())
