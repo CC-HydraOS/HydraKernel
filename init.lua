@@ -34,7 +34,7 @@ kernel = setmetatable({}, {
 })
 _G.kernel = kernel
 
-kernel.processes.run("/start.lua")
+kernel.processes.run("/boot/HydraKernel/login.lua")
 
 while true do
    kernel.events.fireEvent(kernel.events.awaitEvent())
