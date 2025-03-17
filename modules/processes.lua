@@ -1,7 +1,7 @@
 ---@class HydraKernel.processes
 local lib = {}
 
-local req = require("kernel.require")
+local req = require("boot.kernel.require")
 local function mkEnv(dir)
    return setmetatable({
       require = req(dir)

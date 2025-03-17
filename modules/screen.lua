@@ -204,7 +204,7 @@ local screens = {
 ---@diagnostic disable-next-line lowercase-global
 _G.term = nil
 
-local peripherals = require("kernel.modules.peripherals")
+local peripherals = require("boot.kernel.modules.peripherals")
 local function updateScreens()
    local native = screens[0]
    screens = {[0] = native}
