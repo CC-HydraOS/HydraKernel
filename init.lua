@@ -2,17 +2,17 @@
 
 local container = ...
 
-require, package = dofile("HydraKernel/require.lua")()
+require, package = dofile("/boot/kernel/require.lua")()
 
 ---@class HydraKernel
 kernel = setmetatable({}, {
    __type = "HydraKernel"
 })
-kernel.filesystem = require("HydraKernel.modules.filesystem")
-kernel.screen = require("HydraKernel.modules.screen")
-kernel.peripherals = require("HydraKernel.modules.peripherals")
-kernel.events = require("HydraKernel.modules.events")
-kernel.processes = require("HydraKernel.modules.processes")
+kernel.filesystem = require("kernel.modules.filesystem")
+kernel.screen = require("kernel.modules.screen")
+kernel.peripherals = require("kernel.modules.peripherals")
+kernel.events = require("kernel.modules.events")
+kernel.processes = require("kernel.modules.processes")
 
 
 for k, v in pairs(kernel) do
